@@ -1,0 +1,99 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "appointment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clinic_type",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "patient_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "appointment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "doctor_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "appointment_date",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "appointment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "doctor_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "ASCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "appointment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "patient_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "diagnose_result",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "patient_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    },
+    {
+      "collectionGroup": "lab_report",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tckn",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "uploaded_at",
+          "order": "DESCENDING"
+        }
+      ],
+      "density": "SPARSE_ALL"
+    }
+  ],
+  "fieldOverrides": []
+}

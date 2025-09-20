@@ -1,0 +1,8 @@
+const int MAX_USERNAME_LENGTH = 16;
+const int MAX_PASSWORD_LENGTH = 24;
+const int MAX_TCKN_LENGTH = 11;
+const int MAX_HOSPITAL_NAME_LENGTH = 42;
+const int MAX_EMAIL_LENGTH = 32;
+const int MAX_ADDRESS_LENGTH = 128;
+const int MAX_PHONE_NUMBER_LENGTH = 10;
+const int MAX_MAPS_LINK_LENGTH = 64;

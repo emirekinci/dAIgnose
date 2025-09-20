@@ -1,0 +1,100 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserType() {
+      return exists(/databases/$(database)/documents/admin/$(request.auth.uid)) ? 'admin' :
+             exists(/databases/$(database)/documents/doctor/$(request.auth.uid)) ? 'doctor' :
+             exists(/databases/$(database)/documents/patient/$(request.auth.uid)) ? 'patient' :
+             exists(/databases/$(database)/documents/hospital/$(request.auth.uid)) ? 'hospital' : 'none';
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserType() == 'admin';
+    }
+    
+    function isDoctor() {
+      return isAuthenticated() && getUserType() == 'doctor';
+    }
+    
+    function isPatient() {
+      return isAuthenticated() && getUserType() == 'patient';
+    }
+    
+    function isHospital() {
+      return isAuthenticated() && getUserType() == 'hospital';
+    }
+
+    function getPatientTckn() {
+      return get(/databases/$(database)/documents/patient/$(request.auth.uid)).data.tckn;
+    }
+    
+    // User tables - read allowed (username - email manipulation)
+    match /admin/{userId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /hospital/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin();
+    }
+    
+    match /doctor/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isHospital();
+    }
+    
+    match /patient/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Others
+
+    match /pharmacy/{userId} {
+      allow read: if isAuthenticated() && (isPatient() || isAdmin());
+      allow write: if isAuthenticated() && isAdmin();
+    }
+
+    match /lab_report/{userId} {
+      allow read: if isAuthenticated() && (resource.data.tckn == getPatientTckn() || isDoctor());
+      allow write: if isAuthenticated() && isHospital();
+    }
+
+    match /diagnose_result/{userId} {
+      allow read: if isAuthenticated() && (resource.data.patient_id == request.auth.uid || isDoctor());
+      allow write: if isAuthenticated() && request.resource.data.patient_id == request.auth.uid;
+    }
+
+    match /appointment/{userId} {
+      allow read: if isAuthenticated() && (resource.data.patient_id == request.auth.uid || resource.data.doctor_id == request.auth.uid);
+      allow write: if isAuthenticated() && request.resource.data.patient_id == request.auth.uid;
+    }
+
+    match /clinic_type/{userId} {
+      allow write: if false;
+    }
+
+    match /clinic/{userId} {
+      allow read: if isAuthenticated() && (isPatient() || isDoctor() || resource.data.hospital_id == request.auth.uid)
+      allow write: if isAuthenticated() && request.resource.data.hospital_id == request.auth.uid;
+    }
+
+    match /clinic_doctor/{userId} {
+      allow read: if isAuthenticated() && (isPatient() || isDoctor() || resource.data.hospital_id == request.auth.uid)
+      allow write: if isAuthenticated() && request.resource.data.hospital_id == request.auth.uid;
+    }
+
+    // Catch-all rule
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
